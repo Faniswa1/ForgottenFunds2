@@ -2,7 +2,7 @@ import os
 import logging
 import stripe
 from flask import Flask
-from flask_sqlalchemy import SQLALCHEMY
+from flask_sqlalchemy import sqlalchemy
 from flask_login import LoginManager
 from models import db, User, UnclaimedFund
 from routes import create_routes
