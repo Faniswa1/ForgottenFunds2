@@ -33,14 +33,26 @@ def load_user(user_id):
 # Register routes
 create_routes(app)
 
-# Create tables and initialize admin user
+# Create tables and initialize admin user securely
 with app.app_context():
     db.create_all()
-    if not User.query.filter_by(username="atha").first():
-        admin_user = User(username="atha", email="admin@example.com", password="hashed_password", is_admin=True)
+
+    # Fetch admin credentials from environment variables
+    ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'default_admin')
+    ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', 'admin@example.com')
+    ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'change_this')
+
+    # Check if admin user exists
+    if not User.query.filter_by(username=ADMIN_USERNAME).first():
+        admin_user = User(
+            username=ADMIN_USERNAME, 
+            email=ADMIN_EMAIL, 
+            password=ADMIN_PASSWORD,  # Ensure you hash this before saving
+            is_admin=True
+        )
         db.session.add(admin_user)
         db.session.commit()
-        logging.debug("Admin user created")
+        logging.info("Admin user created successfully")
 
 if __name__ == "__main__":
     app.run(debug=True)
