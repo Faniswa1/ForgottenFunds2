@@ -1,9 +1,12 @@
 import os
+from urllib.parse import urlparse
 
-uri = os.getenv("DATABASE_URL", "sqlite:///default.db")  # Get the env variable
-if uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://", 1)  # Fix for SQLAlchemy
+# Get database URL from environment
+db_url = os.environ.get("DATABASE_URL")
 
-SQLALCHEMY_DATABASE_URI = uri
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+# Convert Render's PostgreSQL URL to SQLAlchemy 2.0 format
+if db_url and db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql+psycopg2://", 1)
 
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
