@@ -1,12 +1,11 @@
 import os
-from urllib.parse import urlparse
 
-# Get database URL from environment
-db_url = os.environ.get("DATABASE_URL")
+class Config:
+    SECRET_KEY = os.getenv("SESSION_SECRET", "dev_secret_key_123")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_recycle": 300,
+        "pool_pre_ping": True,
+    }
 
-# Convert Render's PostgreSQL URL to SQLAlchemy 2.0 format
-if db_url and db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql+psycopg2://", 1)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = db_url
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
